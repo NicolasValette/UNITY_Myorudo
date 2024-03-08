@@ -85,9 +85,28 @@ namespace Myorudo.Player
         {
             if (_handFSM.GetComponent<HandFSM>().CurrentState is IdleState)
             {
-                _rollProvider.TakeDice();
+                _rollProvider.TakeDice(GetPosition());
                 if (_isDebug) Debug.Log("Take Dice");
             }
+        }
+
+        public Vector3 GetPosition()
+        {
+            var mouse = Mouse.current;
+            Ray rayToMouse = Camera.main.ScreenPointToRay(mouse.position.ReadValue());
+            RaycastHit hit;
+            if (Physics.Raycast(rayToMouse, out hit))
+            {
+                Vector3 vect = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+                return vect;
+            }
+            return Vector3.zero;
+        }
+
+        public Vector2 GetCursorDeltaPos()
+        {
+            var mouse = Mouse.current;
+            return mouse.delta.ReadValue();
         }
     }
 }

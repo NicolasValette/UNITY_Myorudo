@@ -9,7 +9,7 @@ namespace Myorudo.Interfaces.Actions
     public interface IRoll
     {
         public void Roll();
-        public void TakeDice();
+        public void TakeDice(Vector3 position);
         public void RoundOver();
         public void Bet();
         public void Look();

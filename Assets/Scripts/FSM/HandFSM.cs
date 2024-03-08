@@ -1,14 +1,19 @@
 using Myorudo.FSM.States;
 using Myorudo.Interfaces.Actions;
+using Myorudo.Interfaces.Dice;
+using Myorudo.Interfaces.FSM;
+using Myorudo.Player;
 using UnityEngine;
 
 namespace Myorudo.FSM
 {
-    public class HandFSM : MonoBehaviour, IRoll
+    public class HandFSM : MonoBehaviour, IRoll, IFSMHandActions
     {
         #region Serialized Fields
         [SerializeField]
         private bool _isDebugMode = false;
+        [SerializeField]
+        private PlayerInput _playerInput;
         #endregion
 
         private State _currentState;
@@ -19,10 +24,19 @@ namespace Myorudo.FSM
         public bool IsRoundOver { get; private set; } = false;
         public bool IsBet { get; private set; } = false;
         public bool IsDudo { get; private set; } = false;
+
+        private IMoveDice _moveDiceProvider;
+
         // Start is called before the first frame update
         void Start()
         {
             InitFMS();
+
+            _moveDiceProvider = GetComponent<IMoveDice>();
+            if (_moveDiceProvider == null)
+            {
+                Debug.LogError($"Missing componant Move dice provider in {gameObject.name}");
+            }
         }
 
         // Update is called once per frame
@@ -58,9 +72,10 @@ namespace Myorudo.FSM
             IsRoundOver = false;
             IsDudo = false;
         }
-        public void TakeDice()
+        public void TakeDice(Vector3 position)
         {
             IsDiceInHand = true;
+            _moveDiceProvider.TakeDice(position);
         }
 
         public void Roll()
@@ -90,6 +105,16 @@ namespace Myorudo.FSM
         public void Dudo()
         {
             IsDudo = true;
+        }
+
+        public void MoveDice()
+        {
+            _moveDiceProvider.MoveHeldDice(_playerInput.GetPosition());
+        }
+        public void RollDice()
+        {
+            Debug.Log("Roll--");
+            _moveDiceProvider.Roll(_playerInput.GetCursorDeltaPos());
         }
     }
 }

@@ -1,3 +1,4 @@
+using Myorudo.Interfaces.FSM;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,7 @@ namespace Myorudo.FSM.States
 {
     public class IdleState : State
     {
-        public IdleState(HandFSM fsm) : base(fsm)
+        public IdleState(IFSMHandActions fsm) : base(fsm)
         {
         }
         public override void EnterState()

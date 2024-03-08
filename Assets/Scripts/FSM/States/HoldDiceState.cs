@@ -1,3 +1,4 @@
+using Myorudo.Interfaces.FSM;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,7 @@ namespace Myorudo.FSM.States
 {
     public class HoldDiceState : State
     {
-        public HoldDiceState(HandFSM fsm) : base(fsm)
+        public HoldDiceState(IFSMHandActions fsm) : base(fsm)
         {
         }
 
@@ -17,12 +18,12 @@ namespace Myorudo.FSM.States
 
         public override void Execute()
         {
-           // throw new System.NotImplementedException();
+            _fsm.MoveDice();
         }
 
         public override void ExitState()
         {
-           // throw new System.NotImplementedException();
+            _fsm.RollDice();
         }
 
         public override State Transition()

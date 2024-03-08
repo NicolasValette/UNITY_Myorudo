@@ -1,3 +1,4 @@
+using Myorudo.Interfaces.FSM;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,9 +7,9 @@ namespace Myorudo.FSM.States
 {
     public abstract class State
     {
-        protected HandFSM _fsm;
+        protected IFSMHandActions _fsm;
 
-        public State (HandFSM fsm)
+        public State (IFSMHandActions fsm)
         {
             _fsm = fsm;
         }

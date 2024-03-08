@@ -1,3 +1,4 @@
+using Myorudo.Interfaces.FSM;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -7,7 +8,7 @@ namespace Myorudo.FSM.States
 {
     public class LookState : State
     {
-        public LookState(HandFSM fsm) : base(fsm)
+        public LookState(IFSMHandActions fsm) : base(fsm)
         {
         }
 
