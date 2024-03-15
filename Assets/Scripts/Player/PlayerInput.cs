@@ -1,6 +1,7 @@
 using Myorudo.FSM;
 using Myorudo.FSM.States;
 using Myorudo.Interfaces.Actions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,23 +18,27 @@ namespace Myorudo.Player
         private GameObject _handFSM;
         #endregion
 
+        #region InputEvent
+        public static event Action OnRollReady;
+        #endregion
+
         private IRoll _rollProvider;
 
         // Start is called before the first frame update
         void Start()
         {
-            if (_handFSM == null)
-            {
-                Debug.LogError($"Missing component handFSM in {gameObject.name}");
-            }
-            else
-            {
-                _rollProvider = _handFSM.GetComponent<IRoll>();
-                if (_rollProvider == null)
-                {
-                    Debug.LogError($"Missing component in {gameObject.name}");
-                }
-            }
+            //if (_handFSM == null)
+            //{
+            //    Debug.LogError($"Missing component handFSM in {gameObject.name}");
+            //}
+            //else
+            //{
+            //    _rollProvider = _handFSM.GetComponent<IRoll>();
+            //    if (_rollProvider == null)
+            //    {
+            //        Debug.LogError($"Missing component in {gameObject.name}");
+            //    }
+            //}
         }
 
         // Update is called once per frame
@@ -43,53 +48,59 @@ namespace Myorudo.Player
         }
         public void OnBet(InputValue inputValue)
         {
-            if (_handFSM.GetComponent<HandFSM>().CurrentState is WaitState)
-            {
-                if (_isDebug) Debug.Log("OnBet");
-                _rollProvider.Bet();
-            }
+            //if (_handFSM.GetComponent<HandFSM>().CurrentState is WaitState)
+            //{
+            //    if (_isDebug) Debug.Log("OnBet");
+            //    _rollProvider.Bet();
+            //}
         }
         public void OnLook(InputValue inputValue)
         {
-            if (_handFSM.GetComponent<HandFSM>().CurrentState is WaitState)
-            {
-                if (_isDebug) Debug.Log("OnLook");
-                _rollProvider.Look();
-            }
+            //if (_handFSM.GetComponent<HandFSM>().CurrentState is WaitState)
+            //{
+            //    if (_isDebug) Debug.Log("OnLook");
+            //    _rollProvider.Look();
+            //}
         }
         public void OnEndRound(InputValue inputValue)
         {
-            if (_handFSM.GetComponent<HandFSM>().CurrentState is BetState)
-            {
-                if (_isDebug) Debug.Log("OnRoundOver");
-                _rollProvider.RoundOver();
-            }
+            //if (_handFSM.GetComponent<HandFSM>().CurrentState is BetState)
+            //{
+            //    if (_isDebug) Debug.Log("OnRoundOver");
+            //    _rollProvider.RoundOver();
+            //}
         }
         public void OnRoll(InputValue inputValue)
         {
-            if (_handFSM.GetComponent<HandFSM>().CurrentState is HoldDiceState)
-            {
-                if (_isDebug) Debug.Log("OnRoll");
-                _rollProvider.Roll();
-            }
+            //if (_handFSM.GetComponent<HandFSM>().CurrentState is HoldDiceState)
+            //{
+            //    if (_isDebug) Debug.Log("OnRoll");
+            //    _rollProvider.Roll();
+            //}
         }
         public void OnDudo(InputValue inputValue)
         {
-            if (_handFSM.GetComponent<HandFSM>().CurrentState is WaitState)
-            {
-                if (_isDebug) Debug.Log("OnDudo");
-                _rollProvider.Dudo();
-            }
+            //if (_handFSM.GetComponent<HandFSM>().CurrentState is WaitState)
+            //{
+            //    if (_isDebug) Debug.Log("OnDudo");
+            //    _rollProvider.Dudo();
+            //}
         }
         public void TakeDice()
         {
-            if (_handFSM.GetComponent<HandFSM>().CurrentState is IdleState)
-            {
-                _rollProvider.TakeDice(GetPosition());
-                if (_isDebug) Debug.Log("Take Dice");
-            }
+            //if (_handFSM.GetComponent<HandFSM>().CurrentState is IdleState)
+            //{
+            //    _rollProvider.TakeDice(GetPosition());
+            //    if (_isDebug) Debug.Log("Take Dice");
+            //}
         }
 
+
+        public bool IsMouseClick()
+        {
+            var mouse = Mouse.current;
+            return mouse.leftButton.isPressed;
+        }
         public Vector3 GetPosition()
         {
             var mouse = Mouse.current;

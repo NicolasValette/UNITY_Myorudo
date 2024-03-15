@@ -14,6 +14,7 @@ namespace Myorudo.FSM
         private bool _isDebugMode = false;
         [SerializeField]
         private PlayerInput _playerInput;
+
         #endregion
 
         private State _currentState;
@@ -37,23 +38,25 @@ namespace Myorudo.FSM
             {
                 Debug.LogError($"Missing componant Move dice provider in {gameObject.name}");
             }
+
         }
 
         // Update is called once per frame
         void Update()
         {
             _currentState.Execute();
-            State _nextState = _currentState.Transition();
+            State _nextState = _currentState.GetNextState();
+            //State _nextState = _currentState.Transition();
             if (_nextState != null)
             {
-                ChangeState(_nextState);
+                Transition(_nextState);
             }
         }
         private void InitFMS()
         {
-           _currentState = new IdleState(this);
+           //_currentState = new IdleState(this);
         }
-        private void ChangeState(State nextState)
+        private void Transition(State nextState)
         {
             string prevState = _currentState.ToString();
             _currentState.ExitState();

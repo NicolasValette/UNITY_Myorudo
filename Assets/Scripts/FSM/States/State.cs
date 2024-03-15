@@ -7,16 +7,16 @@ namespace Myorudo.FSM.States
 {
     public abstract class State
     {
-        protected IFSMHandActions _fsm;
+        protected ISFMActions _fsm;
 
-        public State (IFSMHandActions fsm)
+        public State (ISFMActions fsm)
         {
             _fsm = fsm;
         }
         public abstract void EnterState();
         public abstract void Execute();
         public abstract void ExitState();
-        public abstract State Transition();
+        public abstract State GetNextState();
 
     }
 }

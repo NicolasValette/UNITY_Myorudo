@@ -3,34 +3,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Myorudo.FSM.States
+namespace Myorudo.FSM.States.PlayerState
 {
-    public class BetState : State
+    public class RollDiceState : State
     {
-        public BetState(IFSMHandActions fsm) : base(fsm)
+        public RollDiceState(ISFMActions fsm) : base(fsm)
         {
         }
 
         public override void EnterState()
         {
-           // throw new System.NotImplementedException();
+
         }
 
         public override void Execute()
         {
-           // throw new System.NotImplementedException();
+            _fsm.RollDice();
         }
 
         public override void ExitState()
         {
-            _fsm.HasBet();
+            
         }
 
-        public override State Transition()
+        public override State GetNextState()
         {
-            return new WaitState(_fsm);
+            return _fsm.RollFinished ? new WaitTurnState(_fsm) : null;
         }
-
-
     }
 }
