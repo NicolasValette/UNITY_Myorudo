@@ -1,3 +1,5 @@
+
+using Myorudo.Game;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,8 +10,13 @@ namespace Myorudo.Interfaces.Game
     public interface IPlay
     {
         event Action OnTurnOver;
-        event Action OnRollFinished;
-        void PrepareToStart(int playerId);
+        event Action<List<int>> OnRollFinished;
+        event Action OnDudo;
+        event Action<int> OnRoundWin;
+        List<int> DiceResult { get; }
+        void PrepareToStart(int playerId, DudoHandler handler);
+        void LooseDices(int numberOfDices);
+        void FinishRound();
         void Play();
     }
 }

@@ -28,7 +28,7 @@ namespace Myorudo.FSM.States.PlayerState
 
         public override State GetNextState()
         {
-            return _fsm.RoundOver ? new WaitingRollState(_fsm) : null;
+            return _fsm.RoundOver ? new FinishRoundState(_fsm) : null;
         }
     }
 }

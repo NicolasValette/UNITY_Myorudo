@@ -20,9 +20,10 @@ namespace Myorudo.Actions
 
         }
 
-        public override void MakeBet ()
+        public override Bid MakeBet ()
         {
             OnBetChanged(new Bid(1,1));
+            return null;
         }
 
         private void PrepareBet(Bid previousBid)

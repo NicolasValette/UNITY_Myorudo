@@ -22,7 +22,7 @@ namespace Myorudo.Actions
         }
         public override bool YellDudo(Bid previousBid)
         {
-            throw new System.NotImplementedException();
+            return true;
         }
     }
 }

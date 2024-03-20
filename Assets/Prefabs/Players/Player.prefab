@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1119628547922717844}
   - component: {fileID: 8169058989984692557}
   - component: {fileID: 7905370894048489631}
-  - component: {fileID: 1602016261323925270}
+  - component: {fileID: 8696384774678403187}
   - component: {fileID: 1113057139558528246}
   - component: {fileID: 1513755615349514830}
   - component: {fileID: 1564532342474028386}
@@ -81,7 +81,7 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &1602016261323925270
+--- !u!114 &8696384774678403187
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -90,14 +90,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 5605143259415331811}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fd82c2960b2a954c8960c46349debd3, type: 3}
+  m_Script: {fileID: 11500000, guid: aeda72db604e20f479f1727795ea5a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDebugMode: 1
+  _isDebugMode: 0
   _playerType: 0
   _gamesRulesData: {fileID: 11400000, guid: 8c3cf32485e3c2b4f8d926ec13ec6df0, type: 2}
   _betProvider: {fileID: 1113057139558528246}
-  _dudoProvider: {fileID: 0}
+  _dudoProvider: {fileID: 1513755615349514830}
   _inputProvider: {fileID: 8169058989984692557}
 --- !u!114 &1113057139558528246
 MonoBehaviour:
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fafa2e65619b9c74a9b23649a08e42f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameRulesData: {fileID: 0}
+  _gameRulesData: {fileID: 11400000, guid: 8c3cf32485e3c2b4f8d926ec13ec6df0, type: 2}
 --- !u!114 &1564532342474028386
 MonoBehaviour:
   m_ObjectHideFlags: 0

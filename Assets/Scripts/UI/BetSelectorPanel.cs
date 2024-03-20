@@ -1,4 +1,5 @@
 using Myorudo.Datas;
+using Myorudo.FSM;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -35,6 +36,8 @@ namespace Myorudo.UI
         [SerializeField]
         private Button _button;
 
+        [SerializeField]
+        PlayerSFM _playerFSM;
         [SerializeField]
         private GameRulesData _gameRulesData;
         

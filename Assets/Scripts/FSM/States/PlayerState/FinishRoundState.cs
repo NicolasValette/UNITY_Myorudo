@@ -5,40 +5,30 @@ using UnityEngine;
 
 namespace Myorudo.FSM.States.PlayerState
 {
-    public class WaitTurnState : State
+    public class FinishRoundState : State
     {
-        public WaitTurnState(ISFMActions fsm) : base(fsm)
+        public FinishRoundState(ISFMActions fsm) : base(fsm)
         {
         }
 
         public override void EnterState()
         {
-
+            //Do nothing
         }
+
         public override void Execute()
         {
-            
+           //Do Nothing
         }
 
         public override void ExitState()
         {
-           
+           _fsm.PrepateForNextRound();
         }
 
         public override State GetNextState()
         {
-            if (_fsm.RoundOver)
-            {
-                return new FinishRoundState(_fsm);
-            }
-            else if (_fsm.ActiveTurn)
-            {
-                return new ActiveTurnState(_fsm);
-            }
-            else
-            {
-                return null;
-            }
+            return new WaitingRollState(_fsm);
         }
     }
 }

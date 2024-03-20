@@ -21,23 +21,25 @@ namespace Myorudo.FSM
         Human,
         IA
     }
-    public class PlayerSFM : MonoBehaviour, ISFMActions, IPlay
+    public abstract class PlayerSFM : MonoBehaviour, ISFMActions, IPlay
     {
         [SerializeField]
-        private bool _isDebugMode = false;
+        protected bool _isDebugMode = false;
         [SerializeField]
-        private PlayerType _playerType;
+        protected PlayerType _playerType;
         [SerializeField]
-        private GameRulesData _gamesRulesData;
+        protected GameRulesData _gamesRulesData;
         [SerializeField]
-        private Bet _betProvider;
+        protected Bet _betProvider;
         [SerializeField]
-        private Dudo _dudoProvider;
+        protected Dudo _dudoProvider;
         [Header("Human relative")]
         [SerializeField]
-        private PlayerInput _inputProvider;
+        protected PlayerInput _inputProvider;
 
-        private IRollDice _diceRollerProvider;
+        protected DudoHandler _dudoHandler;
+
+        protected IRollDice _diceRollerProvider;
 
         public bool ReadyToRoll { get; private set; }
 
@@ -55,13 +57,17 @@ namespace Myorudo.FSM
 
         public int PlayerId { get; private set; }
 
-        private List<int> _diceResult = new List<int>();
-        private int _numberOfDiceLeft;
-        
-        private State _currentState;
+        protected List<int> _diceResult = new List<int>();
+        public List<int> DiceResult { get { return _diceResult; } }
+        protected int _numberOfDiceLeft;
+
+        protected State _currentState;
+        public State CurrentState { get { return _currentState; } }
 
         public event Action OnTurnOver;
-        public event Action OnRollFinished;
+        public event Action<List<int>> OnRollFinished;
+        public event Action OnDudo;
+        public event Action<int> OnRoundWin;
 
 
         // Start is called before the first frame update
@@ -73,7 +79,10 @@ namespace Myorudo.FSM
         }
         private void OnEnable()
         {
-            NextTurn.RollDice += PrepareToRoll;
+            if (_playerType == PlayerType.IA)
+            {
+                NextTurn.RollDice += PrepareToRoll;
+            }
         }
         private void OnDisable()
         {
@@ -83,28 +92,25 @@ namespace Myorudo.FSM
         // Update is called once per frame
         void Update()
         {
-                _currentState.Execute();
-                State _nextState = _currentState.GetNextState();
-                if (_nextState != null)
-                {
-                    Transition(_nextState);
-                }
+            _currentState.Execute();
+            State _nextState = _currentState.GetNextState();
+            if (_nextState != null)
+            {
+                Transition(_nextState);
+            }
         }
 
-        private void InitSFM()
+        protected void InitSFM()
         {
             _currentState = new WaitingRollState(this);
-           
+            PrepateForNextRound();
         }
         public void StartRound()
         {
-            _currentState = new WaitingRollState(this);            
+            _currentState = new WaitingRollState(this);
         }
 
-        public void looseDices (int numberOfDices)
-        {
-            _numberOfDiceLeft -= numberOfDices;
-        }
+
         public void PrepareToRoll()
         {
             ReadyToRoll = true;
@@ -114,7 +120,7 @@ namespace Myorudo.FSM
         /// Switch the machine state from one state to the next state
         /// </summary>
         /// <param name="nextState"></param>
-        private void Transition(State nextState)
+        protected void Transition(State nextState)
         {
             string prevState = _currentState.ToString();
 
@@ -133,8 +139,16 @@ namespace Myorudo.FSM
             ActiveTurn = false;
             OnTurnOver?.Invoke();
         }
+        public void EndRoll()
+        {
+            RollFinished = true;
+        }
 
         #region intercafe ISFMActions
+        public void PlayTurn()
+        {
+            Play();
+        }
         public void RollDice()
         {
             ReadyToRoll = false;
@@ -142,44 +156,81 @@ namespace Myorudo.FSM
             if (_isDebugMode)
             {
                 StringBuilder strb = new StringBuilder();
-                for (int i =0; i< _diceResult.Count; i++)
+                for (int i = 0; i < _diceResult.Count; i++)
                 {
                     strb.Append($"-{_diceResult[i]}");
                 }
                 strb.Append("-");
                 Debug.Log($"Dice result for Player #{PlayerId} [{strb}]");
             }
-            RollFinished = true;
-            OnRollFinished.Invoke();
+
+            OnRollFinished.Invoke(_diceResult);
+            if (_playerType == PlayerType.IA)
+            {
+                
+                EndRoll();
+            }
         }
-        
+
+        public void PrepateForNextRound()
+        {
+            ReadyToRoll = false;
+            RollFinished = false;
+            ActiveTurn = false;
+            RoundOver = false;
+            HasDudo = false;
+            HasBet = false;
+            ReadyToBet = false;
+        }
+
         #endregion
 
         #region INTERFACE IPLAY
-        public void PrepareToStart(int playerID)
+        public void PrepareToStart(int playerID, DudoHandler handler)
         {
+            _dudoHandler = handler;
             PlayerId = playerID;
             if (_isDebugMode) Debug.Log($"FSM for {_playerType.ToString()} player {PlayerId} is ready");
         }
-        public void ChooseDudoOrBet()
+        public abstract void ChooseDudoOrBet();
+
+        public void LooseDices(int numberOfDices)
         {
-            
+            _numberOfDiceLeft -= numberOfDices;
         }
         public void Dudo()
         {
             _dudoProvider.YellDudo(_betProvider.CurrentBid);
+            OnDudo?.Invoke();
+
+
+            if (_dudoHandler.RevealHandAndCheckDudoCorrect(_betProvider.CurrentBid))
+            {
+                // active player win his dudo
+                OnRoundWin?.Invoke((PlayerId - 1) < 0 ? _gamesRulesData.NumberOfPlayer - 1 : PlayerId - 1);
+
+            }
+            else
+            {
+                OnRoundWin?.Invoke(PlayerId);
+            }
+
         }
-        public void Bet()
-        {
-            _betProvider.MakeBet();
-        }
+        //public void Bet()
+        //{
+        //    _betProvider.MakeBet();
+        //}
         public void Play()
         {
             if (_isDebugMode) Debug.Log($"[Player #{PlayerId} ({_playerType}] : Start of turn!");
             ActiveTurn = true;
-            
+
         }
-        
+        public void FinishRound()
+        {
+            ActiveTurn = false;
+            RoundOver = true;
+        }
         #endregion
     }
 }

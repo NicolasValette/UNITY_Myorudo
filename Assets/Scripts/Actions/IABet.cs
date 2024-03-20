@@ -19,10 +19,11 @@ namespace Myorudo.Actions
 
         }
 
-        public override void MakeBet()
+        public override Bid MakeBet()
         {
             Bid newbid = new Bid(CurrentBid.Value + 1, CurrentBid.Face);
             OnBetChanged(newbid);
+            return newbid;
         }
         protected override void OnBetChanged(Bid bid)
         {

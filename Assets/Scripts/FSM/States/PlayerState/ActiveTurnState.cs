@@ -14,7 +14,7 @@ namespace Myorudo.FSM.States.PlayerState
 
         public override void EnterState()
         {
-          //  _fsm.PrepareDudo();
+            _fsm.ChooseDudoOrBet();
         }
 
         public override void Execute()

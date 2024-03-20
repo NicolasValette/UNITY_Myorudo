@@ -18,5 +18,11 @@ namespace Myorudo.FSM.States
         public abstract void ExitState();
         public abstract State GetNextState();
 
+        public override string ToString()
+        {
+            return this.GetType().Name;
+        }
+
     }
+
 }

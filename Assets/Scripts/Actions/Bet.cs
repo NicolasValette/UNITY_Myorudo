@@ -28,6 +28,6 @@ namespace Myorudo.Actions
             PrepareBet?.Invoke(bid);
         }
 
-        public abstract void MakeBet();
+        public abstract Bid MakeBet();
     }
 }

@@ -16,6 +16,10 @@ namespace Myorudo.Datas
             _value = value;
             _face = face;
         }
+        public override string ToString()
+        {
+            return $"{_value} - {_face}";
+        }
         
     }
 }
