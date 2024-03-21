@@ -17,6 +17,8 @@ namespace Myorudo.UI
             Face
         }
 
+        [SerializeField]
+        private GameObject _selectorPanel;
         [Header("Value Selector")]
         [SerializeField]
         private TMP_Text _selectorValueFieldText;
@@ -37,7 +39,7 @@ namespace Myorudo.UI
         private Button _button;
 
         [SerializeField]
-        PlayerSFM _playerFSM;
+        HumanPlayerFSM _playerFSM;
         [SerializeField]
         private GameRulesData _gameRulesData;
         
@@ -46,14 +48,28 @@ namespace Myorudo.UI
 
         private int _value;
         private int _face;
+
+        private void OnEnable()
+        {
+            _playerFSM.OnActiveTurn += ActivePanel;
+        }
+        private void OnDisable()
+        {
+            _playerFSM.OnActiveTurn -= ActivePanel;
+        }
+
         // Start is called before the first frame update
         private void Start()
         {
-            _value = 3;
-            _face = 1;
+            _selectorPanel.SetActive(false);   
+        }
 
-            
-            _initialBid = new Bid(_value, _face);
+        public void ActivePanel()
+        {
+            _selectorPanel.SetActive(true);
+            _initialBid = _playerFSM.PreviousBid();
+            _value = _initialBid.Value;
+            _face = _initialBid.Face;
             _selectorValueFieldText.text = _value.ToString();
             _selectorFaceFieldText.text = _face.ToString();
             _previousBidText.text = $"{_initialBid.Value} - {_initialBid.Face}";
@@ -83,7 +99,7 @@ namespace Myorudo.UI
             {
                 _value = _gameRulesData.NumberOfStartingDices;
             }
-            else if (_value > _gameRulesData.NumberOfStartingDices)
+            else if (_value > _gameRulesData.NumberOfStartingDices * _gameRulesData.NumberOfPlayer)
             {
                 _value = _initialBid.Value;
             }
@@ -201,6 +217,8 @@ namespace Myorudo.UI
         public void Bet()
         {
             Debug.Log($"Player bet : {_value} - {_face}");
+            _playerFSM.Bet(new Bid(_value, _face));
+            _selectorPanel.SetActive(false);
         }
     }
 }

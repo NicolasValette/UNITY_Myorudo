@@ -13,12 +13,12 @@ namespace Myorudo.FSM.States.PlayerState
 
         public override void EnterState()
         {
-
+            _fsm.RollDice();
         }
 
         public override void Execute()
         {
-            _fsm.RollDice();
+            
         }
 
         public override void ExitState()

@@ -24,18 +24,14 @@ namespace Myorudo.FSM.States.PlayerState
 
         public override void ExitState()
         {
-           
+            _fsm.EndTurn();
         }
 
         public override State GetNextState()
         {
-            if (_fsm.HasDudo)
+            if (_fsm.BetIsDone)
             {
-                return new TurnDudoState(_fsm);
-            }
-            else if (_fsm.ReadyToBet)
-            {
-                return new BetTurnState(_fsm);
+                return new WaitTurnState(_fsm);
             }
             else
             {

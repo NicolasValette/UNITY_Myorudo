@@ -21,7 +21,8 @@ namespace Myorudo.Actions
         }
         public override bool YellDudo(Bid previousBid)
         {
-            if (previousBid.Value >= _gameRulesData.NumberOfStartingDices)
+
+            if (previousBid == null || previousBid.Value <= _gameRulesData.NumberOfStartingDices * _gameRulesData.NumberOfPlayer)
             {
                 return false;
             }
@@ -29,6 +30,7 @@ namespace Myorudo.Actions
             {
                 return true;
             }
+
         }
     }
 }

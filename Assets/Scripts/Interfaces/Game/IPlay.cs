@@ -11,6 +11,7 @@ namespace Myorudo.Interfaces.Game
     {
         event Action OnTurnOver;
         event Action<List<int>> OnRollFinished;
+        event Action OnRollConfirmed;
         event Action OnDudo;
         event Action<int> OnRoundWin;
         List<int> DiceResult { get; }

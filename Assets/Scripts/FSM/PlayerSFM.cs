@@ -56,6 +56,8 @@ namespace Myorudo.FSM
         public bool ReadyToBet { get; private set; }
 
         public int PlayerId { get; private set; }
+        public bool BetIsDone { get => _betIsDone; }
+        protected bool _betIsDone = false;
 
         protected List<int> _diceResult = new List<int>();
         public List<int> DiceResult { get { return _diceResult; } }
@@ -66,6 +68,7 @@ namespace Myorudo.FSM
 
         public event Action OnTurnOver;
         public event Action<List<int>> OnRollFinished;
+        public event Action OnRollConfirmed;
         public event Action OnDudo;
         public event Action<int> OnRoundWin;
 
@@ -137,11 +140,14 @@ namespace Myorudo.FSM
             // We call the event
             if (_isDebugMode) Debug.Log($"[Player #{PlayerId} ({_playerType}] : End of turn!");
             ActiveTurn = false;
+            _betIsDone = false;
             OnTurnOver?.Invoke();
         }
         public void EndRoll()
         {
+           
             RollFinished = true;
+            OnRollConfirmed?.Invoke();
         }
 
         #region intercafe ISFMActions
@@ -149,7 +155,7 @@ namespace Myorudo.FSM
         {
             Play();
         }
-        public void RollDice()
+        public virtual void RollDice()
         {
             ReadyToRoll = false;
             _diceResult = _diceRollerProvider.RollDice(_numberOfDiceLeft);
@@ -163,13 +169,7 @@ namespace Myorudo.FSM
                 strb.Append("-");
                 Debug.Log($"Dice result for Player #{PlayerId} [{strb}]");
             }
-
-            OnRollFinished.Invoke(_diceResult);
-            if (_playerType == PlayerType.IA)
-            {
-                
-                EndRoll();
-            }
+            OnRollFinished?.Invoke(_diceResult);
         }
 
         public void PrepateForNextRound()
@@ -181,6 +181,7 @@ namespace Myorudo.FSM
             HasDudo = false;
             HasBet = false;
             ReadyToBet = false;
+            _betIsDone = false;
         }
 
         #endregion
@@ -196,13 +197,12 @@ namespace Myorudo.FSM
 
         public void LooseDices(int numberOfDices)
         {
+            Debug.Log($"Player#{PlayerId} loose {numberOfDices}");
             _numberOfDiceLeft -= numberOfDices;
         }
         public void Dudo()
         {
-            _dudoProvider.YellDudo(_betProvider.CurrentBid);
             OnDudo?.Invoke();
-
 
             if (_dudoHandler.RevealHandAndCheckDudoCorrect(_betProvider.CurrentBid))
             {
@@ -232,5 +232,7 @@ namespace Myorudo.FSM
             RoundOver = true;
         }
         #endregion
+
+        
     }
 }

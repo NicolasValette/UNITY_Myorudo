@@ -13,8 +13,11 @@ namespace Myorudo.Actions
         public static event Action<Bid> OnBet;
         public static event Action<Bid> PrepareBet;
 
-        private static Bid _currentBid;
+        protected static Bid _currentBid;
         public Bid CurrentBid { get => _currentBid; }
+
+        [SerializeField]
+        protected bool _isDebugMode;
 
         protected virtual void OnBetChanged(Bid bid)
         {
@@ -28,6 +31,10 @@ namespace Myorudo.Actions
             PrepareBet?.Invoke(bid);
         }
 
-        public abstract Bid MakeBet();
+        public virtual Bid MakeFirstBet(List<int> diceResult)
+        {
+            return null;
+        }
+        public abstract Bid MakeBet(Bid bid = null);
     }
 }

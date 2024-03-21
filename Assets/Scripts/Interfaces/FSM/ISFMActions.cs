@@ -13,9 +13,11 @@ namespace Myorudo.Interfaces.FSM
         bool HasDudo { get; }
         bool HasBet { get; }
         bool ReadyToBet { get; }
+        bool BetIsDone { get;}
 
         void RollDice();
         void PrepateForNextRound();
         void ChooseDudoOrBet();
+        void EndTurn();
     }
 }

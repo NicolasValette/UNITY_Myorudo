@@ -30,8 +30,11 @@ namespace Myorudo.Game
         #endregion
 
         private List<IPlay> _playerSMFList;
+        public List<IPlay> PlayerList { get => _playerSMFList; }
         private int _numberOfFinishRoll = 0;
-        private int _nextPlayer = 0;
+        private static int _nextPlayer = 0;
+        public static int CurrentPlayer => _nextPlayer;
+
 
         #region Debug attribute
         private List<PlayerSFM> _debugPlayerSFMList;
@@ -69,6 +72,7 @@ namespace Myorudo.Game
                 _debugPlayerSFMList.Add(tmpGO.GetComponent<PlayerSFM>());
             }
             _nextPlayer = UnityEngine.Random.Range(0, _gameRulesData.NumberOfPlayer);
+            
 
           
         }
@@ -86,7 +90,7 @@ namespace Myorudo.Game
             }
         }
 
-        public void WaitEveryoneRoll(List<int> dices)
+        public void WaitEveryoneRoll()
         {
             _numberOfFinishRoll++;
             Debug.Log("Roll finished : " + _numberOfFinishRoll);
@@ -108,14 +112,17 @@ namespace Myorudo.Game
             {
                 _playerSMFList[i].PrepareToStart(i, dudoProvider);
                 _playerSMFList[i].OnTurnOver += NextPlayer;
-                _playerSMFList[i].OnRollFinished += WaitEveryoneRoll;
+                _playerSMFList[i].OnRollConfirmed += WaitEveryoneRoll;
             }
             _nextPlayer = UnityEngine.Random.Range(0, _gameRulesData.NumberOfPlayer);
+            _nextPlayer = 0;
+            Debug.Log($"First player is Player {(_nextPlayer + 1) % _gameRulesData.NumberOfPlayer}");
             RollDice?.Invoke();
         }
         public void NextPlayer()
         {
             _nextPlayer = (_nextPlayer + 1) % _gameRulesData.NumberOfPlayer;
+            Debug.Log($"Turn : Player #{_nextPlayer} ");
             _playerSMFList[_nextPlayer].Play();
         }
         public void RoundOver(int looserId)
