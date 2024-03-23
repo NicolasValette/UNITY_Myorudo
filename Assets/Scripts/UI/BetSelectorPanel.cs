@@ -45,6 +45,7 @@ namespace Myorudo.UI
         
 
         private Bid _initialBid;
+        private bool _isFirstBidOfRound = false;
 
         private int _value;
         private int _face;
@@ -68,6 +69,16 @@ namespace Myorudo.UI
         {
             _selectorPanel.SetActive(true);
             _initialBid = _playerFSM.PreviousBid();
+            if (_initialBid == null)
+            {
+                //first round
+                _initialBid = new Bid(1, 1);
+                _isFirstBidOfRound = true;
+            }
+            else
+            {
+                _isFirstBidOfRound = false;
+            }
             _value = _initialBid.Value;
             _face = _initialBid.Face;
             _selectorValueFieldText.text = _value.ToString();
@@ -219,6 +230,15 @@ namespace Myorudo.UI
             Debug.Log($"Player bet : {_value} - {_face}");
             _playerFSM.Bet(new Bid(_value, _face));
             _selectorPanel.SetActive(false);
+        }
+        public void Dudo()
+        {
+            if (!_isFirstBidOfRound)
+            {
+                Debug.Log("Player yells Dudo");
+                _playerFSM.Dudo();
+                _selectorPanel.SetActive(false);
+            }
         }
     }
 }

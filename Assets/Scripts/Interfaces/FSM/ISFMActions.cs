@@ -14,6 +14,7 @@ namespace Myorudo.Interfaces.FSM
         bool HasBet { get; }
         bool ReadyToBet { get; }
         bool BetIsDone { get;}
+        bool IsEliminated { get; }
 
         void RollDice();
         void PrepateForNextRound();

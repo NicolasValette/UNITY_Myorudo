@@ -27,7 +27,11 @@ namespace Myorudo.FSM.States.PlayerState
 
         public override State GetNextState()
         {
-            if (_fsm.RoundOver)
+            if (_fsm.IsEliminated)
+            {
+                return new EliminatedState(_fsm);
+            }
+            else if (_fsm.RoundOver)
             {
                 return new FinishRoundState(_fsm);
             }

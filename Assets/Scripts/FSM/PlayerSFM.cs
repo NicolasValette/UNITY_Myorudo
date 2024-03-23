@@ -41,6 +41,7 @@ namespace Myorudo.FSM
 
         protected IRollDice _diceRollerProvider;
 
+        public PlayerType Type { get => _playerType; }
         public bool ReadyToRoll { get; private set; }
 
         public bool RollFinished { get; private set; }
@@ -54,6 +55,7 @@ namespace Myorudo.FSM
         public bool HasBet { get; private set; }
 
         public bool ReadyToBet { get; private set; }
+        public bool IsEliminated { get; private set; }
 
         public int PlayerId { get; private set; }
         public bool BetIsDone { get => _betIsDone; }
@@ -62,6 +64,7 @@ namespace Myorudo.FSM
         protected List<int> _diceResult = new List<int>();
         public List<int> DiceResult { get { return _diceResult; } }
         protected int _numberOfDiceLeft;
+        public int NumberOfDiceLeft { get => DiceResult.Count; }
 
         protected State _currentState;
         public State CurrentState { get { return _currentState; } }
@@ -70,7 +73,8 @@ namespace Myorudo.FSM
         public event Action<List<int>> OnRollFinished;
         public event Action OnRollConfirmed;
         public event Action OnDudo;
-        public event Action<int> OnRoundWin;
+        
+        
 
 
         // Start is called before the first frame update
@@ -103,6 +107,10 @@ namespace Myorudo.FSM
             }
         }
 
+        //protected void OnElimination(bool isHumain)
+        //{
+        //    OnPlayerEliminated?.Invoke(isHumain);
+        //}
         protected void InitSFM()
         {
             _currentState = new WaitingRollState(this);
@@ -141,7 +149,10 @@ namespace Myorudo.FSM
             if (_isDebugMode) Debug.Log($"[Player #{PlayerId} ({_playerType}] : End of turn!");
             ActiveTurn = false;
             _betIsDone = false;
-            OnTurnOver?.Invoke();
+            if (!RoundOver)
+            {
+                OnTurnOver?.Invoke();
+            }
         }
         public void EndRoll()
         {
@@ -187,33 +198,46 @@ namespace Myorudo.FSM
         #endregion
 
         #region INTERFACE IPLAY
+        public void Eliminate()
+        {
+            NextTurn.RollDice -= PrepareToRoll;
+            IsEliminated = true;
+        }
         public void PrepareToStart(int playerID, DudoHandler handler)
         {
             _dudoHandler = handler;
             PlayerId = playerID;
+            IsEliminated = false;
             if (_isDebugMode) Debug.Log($"FSM for {_playerType.ToString()} player {PlayerId} is ready");
+        }
+        public void DecreaseId()
+        {
+            PlayerId--;
         }
         public abstract void ChooseDudoOrBet();
 
-        public void LooseDices(int numberOfDices)
+        public virtual bool LooseDices(int numberOfDices)
         {
-            Debug.Log($"Player#{PlayerId} loose {numberOfDices}");
+            Debug.Log($"Player#{PlayerId} loose {numberOfDices} dice(s)");
             _numberOfDiceLeft -= numberOfDices;
+            return _numberOfDiceLeft <= 0;
         }
         public void Dudo()
         {
+            if (_isDebugMode) Debug.Log($"Player {PlayerId} dudo the previous bid {_betProvider.CurrentBid}");
             OnDudo?.Invoke();
-
-            if (_dudoHandler.RevealHandAndCheckDudoCorrect(_betProvider.CurrentBid))
-            {
-                // active player win his dudo
-                OnRoundWin?.Invoke((PlayerId - 1) < 0 ? _gamesRulesData.NumberOfPlayer - 1 : PlayerId - 1);
-
-            }
-            else
-            {
-                OnRoundWin?.Invoke(PlayerId);
-            }
+            _dudoHandler.RevealHandAndCheckDudoCorrect(_betProvider.CurrentBid, PlayerId);
+            //if ()
+            //{
+            //    // active player win his dudo
+            //    OnRoundWin?.Invoke((PlayerId - 1) < 0 ? _gamesRulesData.NumberOfPlayer - 1 : PlayerId - 1);
+            
+            //}
+            //else
+            //{
+            //    OnRoundWin?.Invoke(PlayerId);
+               
+            //}
 
         }
         //public void Bet()
@@ -222,8 +246,17 @@ namespace Myorudo.FSM
         //}
         public void Play()
         {
-            if (_isDebugMode) Debug.Log($"[Player #{PlayerId} ({_playerType}] : Start of turn!");
-            ActiveTurn = true;
+            if (_currentState is EliminatedState)
+            {
+                Debug.Log($"Player #{PlayerId} is ELIMINATED");
+                
+               // OnTurnOver?.Invoke();
+            }
+            else
+            {
+                if (_isDebugMode) Debug.Log($"[Player #{PlayerId} ({_playerType}] : Start of turn!");
+                ActiveTurn = true;        
+            }
 
         }
         public void FinishRound()

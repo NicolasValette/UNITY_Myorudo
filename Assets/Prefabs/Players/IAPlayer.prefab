@@ -53,6 +53,7 @@ MonoBehaviour:
   _betProvider: {fileID: 6512684583702772500}
   _dudoProvider: {fileID: 756459752902076137}
   _inputProvider: {fileID: 0}
+  _iaPlayerData: {fileID: 11400000, guid: 36c65d33776aaf14d80083907f648008, type: 2}
 --- !u!114 &756459752902076137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,6 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 361e40ffdb36f2b48a1575a9ac02daf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isDebugMode: 0
 --- !u!114 &6574387085899791177
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,18 +8,20 @@ namespace Myorudo.FSM
 {
     public class IAPlayerFSM : PlayerSFM
     {
+        [SerializeField]
+        private IAPlayerData _iaPlayerData;
         public override void ChooseDudoOrBet()
         {
             if (_dudoProvider.YellDudo(_betProvider.CurrentBid))
             {
                 //dudo
                 Dudo();
-                if (_isDebugMode) Debug.Log($"Player {PlayerId} dudo the previous bid {_betProvider.CurrentBid}");
+               
             }
             else
             {
                 //bet
-                StartCoroutine(Wait(1f, CallBet));
+                StartCoroutine(Wait(CallBet));
             }
         }
         public void CallBet()
@@ -37,9 +39,9 @@ namespace Myorudo.FSM
             _betIsDone = true;
             if (_isDebugMode) Debug.Log($"Player #{PlayerId} (IA) bet {bid}");
         }
-        protected IEnumerator Wait(float waitTime, Action action)
+        protected IEnumerator Wait(Action action)
         {
-            yield return new WaitForSeconds(waitTime);
+            yield return new WaitForSeconds(_iaPlayerData.WaitingTime);
             action.Invoke();
         }
        
@@ -47,6 +49,16 @@ namespace Myorudo.FSM
         {
             base.RollDice();
             EndRoll();
+        }
+        public override bool LooseDices(int numberOfDices)
+        {
+            var result = base.LooseDices(numberOfDices);
+            if (_numberOfDiceLeft <= 0)
+            {
+                Debug.Log($"Player #{PlayerId} is eliminated !");
+                //base.OnElimination(false);
+            }
+            return result;
         }
     }
 }

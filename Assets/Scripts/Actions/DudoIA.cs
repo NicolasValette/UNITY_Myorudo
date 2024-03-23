@@ -1,4 +1,5 @@
 using Myorudo.Datas;
+using Myorudo.Game;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace Myorudo.Actions
         public override bool YellDudo(Bid previousBid)
         {
 
-            if (previousBid == null || previousBid.Value <= _gameRulesData.NumberOfStartingDices * _gameRulesData.NumberOfPlayer)
+            if (previousBid == null || previousBid.Value <= (_gameRulesData.NumberOfStartingDices * _gameRulesData.NumberOfPlayer) - NextTurn.RoundNumber)
             {
                 return false;
             }

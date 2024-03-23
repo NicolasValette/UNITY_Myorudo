@@ -30,5 +30,15 @@ namespace Myorudo.FSM
             if (_isDebugMode) Debug.Log($"Player #{PlayerId}(Human) bet {bid}");
             _betIsDone = true;                
         }
+        public override bool LooseDices(int numberOfDices)
+        {
+            var result = base.LooseDices(numberOfDices);
+            if (_numberOfDiceLeft <= 0)
+            {
+                Debug.Log($"Human player #{PlayerId} is eliminated !");
+                //OnElimination(true);
+            }
+            return result;
+        }
     }
 }

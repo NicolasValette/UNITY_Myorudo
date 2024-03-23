@@ -1,4 +1,5 @@
 using Myorudo.Datas;
+using Myorudo.Game;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +20,14 @@ namespace Myorudo.Actions
         [SerializeField]
         protected bool _isDebugMode;
 
+        private void OnEnable()
+        {
+            NextTurn.PrepareNextRound += NextRound;
+        }
+        private void OnDisable()
+        {
+            NextTurn.PrepareNextRound -= NextRound;
+        }
         protected virtual void OnBetChanged(Bid bid)
         {
             _currentBid = bid;
@@ -34,6 +43,10 @@ namespace Myorudo.Actions
         public virtual Bid MakeFirstBet(List<int> diceResult)
         {
             return null;
+        }
+        public void NextRound()
+        {
+            _currentBid = null;
         }
         public abstract Bid MakeBet(Bid bid = null);
     }

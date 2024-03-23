@@ -1,4 +1,5 @@
 
+using Myorudo.FSM;
 using Myorudo.Game;
 using System;
 using System.Collections;
@@ -13,11 +14,15 @@ namespace Myorudo.Interfaces.Game
         event Action<List<int>> OnRollFinished;
         event Action OnRollConfirmed;
         event Action OnDudo;
-        event Action<int> OnRoundWin;
+
+        PlayerType Type { get; }
         List<int> DiceResult { get; }
+        bool IsEliminated { get; }
         void PrepareToStart(int playerId, DudoHandler handler);
-        void LooseDices(int numberOfDices);
+        bool LooseDices(int numberOfDices);
         void FinishRound();
         void Play();
+        void DecreaseId();
+        void Eliminate();
     }
 }
