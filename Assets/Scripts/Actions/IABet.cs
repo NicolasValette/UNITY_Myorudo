@@ -24,7 +24,7 @@ namespace Myorudo.Actions
         public override Bid MakeFirstBet(List<int> diceResult)
         {
             _currentBid = diceResult.GroupBy(x => x).Select(x => new Bid (x.Count(), x.Key)).OrderByDescending(x => x.Value).First();
-
+            OnBetChanged(_currentBid);
             //diceResult.Select(x=>x);
             return _currentBid;
         }

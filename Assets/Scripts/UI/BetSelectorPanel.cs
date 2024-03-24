@@ -227,9 +227,13 @@ namespace Myorudo.UI
 
         public void Bet()
         {
+            if (_value != _initialBid.Value || _face != _initialBid.Face)
+            {
+
             Debug.Log($"Player bet : {_value} - {_face}");
             _playerFSM.Bet(new Bid(_value, _face));
             _selectorPanel.SetActive(false);
+            }
         }
         public void Dudo()
         {

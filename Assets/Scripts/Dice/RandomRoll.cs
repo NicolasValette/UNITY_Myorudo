@@ -1,5 +1,5 @@
 using Myorudo.Interfaces.Dice;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,11 +7,12 @@ namespace Myorudo.Dice
 {
     public class RandomRoll : MonoBehaviour, IRollDice
     {
-
+        public event Action<List<int>> OnRollResult;
+        private List<int> _diceResult;
         // Start is called before the first frame update
         void Start()
         {
-            
+            _diceResult = new List<int>();
         }
 
         // Update is called once per frame
@@ -26,14 +27,15 @@ namespace Myorudo.Dice
         /// </summary>
         /// <param name="nbOfDices"></param>
         /// <returns>list of generated values</returns>
-        public List<int> RollDice(int nbOfDices)
+        public void RollDice(int nbOfDices)
         {
-            List<int> resultList = new List<int>();
+            _diceResult.Clear();
             for (int  i = 0; i < nbOfDices; i++)
             {
-                resultList.Add(Random.Range(1, 7));
+                _diceResult.Add(UnityEngine.Random.Range(1, 7));
             }
-            return resultList;
+            //return _diceResult;
+            OnRollResult?.Invoke(_diceResult);
         }
         #endregion
     }

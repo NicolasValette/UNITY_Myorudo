@@ -7,6 +7,7 @@ using Myorudo.Interfaces.Dice;
 using Myorudo.Interfaces.FSM;
 using Myorudo.Interfaces.Game;
 using Myorudo.Player;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -81,6 +82,7 @@ namespace Myorudo.FSM
         void Start()
         {
             _diceRollerProvider = GetComponent<IRollDice>();
+            _diceRollerProvider.OnRollResult += ReceiveRollResult;
             _numberOfDiceLeft = _gamesRulesData.NumberOfStartingDices;
             InitSFM();
         }
@@ -94,6 +96,7 @@ namespace Myorudo.FSM
         private void OnDisable()
         {
             NextTurn.RollDice -= PrepareToRoll;
+            _diceRollerProvider.OnRollResult -= ReceiveRollResult;
         }
 
         // Update is called once per frame
@@ -169,7 +172,14 @@ namespace Myorudo.FSM
         public virtual void RollDice()
         {
             ReadyToRoll = false;
-            _diceResult = _diceRollerProvider.RollDice(_numberOfDiceLeft);
+            _diceRollerProvider.RollDice(_numberOfDiceLeft);
+
+            
+        }
+        public void ReceiveRollResult(List<int> diceResult)
+        {
+            _diceResult.Clear();
+            _diceResult = diceResult;
             if (_isDebugMode)
             {
                 StringBuilder strb = new StringBuilder();

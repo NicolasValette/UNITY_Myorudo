@@ -33,6 +33,7 @@ namespace Myorudo.Game
         public static event Action PrepareNextRound;
         public static event Action<bool> OnGameEnd;
         public static event Action OnGameInit;
+        public static event Action OnFirstRoundStart;
         #endregion
 
         private List<IPlay> _playerSMFList;
@@ -148,6 +149,7 @@ namespace Myorudo.Game
             Debug.Log("Roll finished : " + _numberOfFinishRoll);
             if (_numberOfFinishRoll >= _gameRulesData.NumberOfPlayer - _numberOfEliminated)
             {
+                OnFirstRoundStart?.Invoke();
                 NextPlayer();
             }
         }

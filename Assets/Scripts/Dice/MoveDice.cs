@@ -27,7 +27,7 @@ namespace Myorudo.Dice
         // Update is called once per frame
         void Update()
         {
-
+            
         }
         public void TakeDice(Vector3 position)
         {

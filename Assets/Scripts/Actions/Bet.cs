@@ -1,4 +1,5 @@
 using Myorudo.Datas;
+using Myorudo.FSM;
 using Myorudo.Game;
 using System;
 using System.Collections;
@@ -11,7 +12,7 @@ namespace Myorudo.Actions
 
     public abstract class Bet : MonoBehaviour
     {
-        public static event Action<Bid> OnBet;
+        public static event Action<int, Bid> OnBet;
         public static event Action<Bid> PrepareBet;
 
         protected static Bid _currentBid;
@@ -32,7 +33,7 @@ namespace Myorudo.Actions
         {
             _currentBid = bid;
             // Safely raise the event for all subscribers
-            OnBet?.Invoke(bid);
+            OnBet?.Invoke(GetComponent<PlayerSFM>().PlayerId, bid);
         }
         protected virtual void OnPrepareBet(Bid bid)
         {

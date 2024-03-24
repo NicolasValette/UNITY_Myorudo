@@ -44,7 +44,15 @@ namespace Myorudo.Player
         // Update is called once per frame
         void Update()
         {
-
+            if (Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+                Debug.Log("escape");
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            }
         }
         public void OnBet(InputValue inputValue)
         {
