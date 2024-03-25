@@ -34,6 +34,8 @@ namespace Myorudo.FSM
         protected Bet _betProvider;
         [SerializeField]
         protected Dudo _dudoProvider;
+        [SerializeField]
+        protected GameObject _diceRollerGameObject;
         [Header("Human relative")]
         [SerializeField]
         protected PlayerInput _inputProvider;
@@ -81,7 +83,11 @@ namespace Myorudo.FSM
         // Start is called before the first frame update
         void Start()
         {
-            _diceRollerProvider = GetComponent<IRollDice>();
+            _diceRollerProvider = _diceRollerGameObject.GetComponent<IRollDice>();
+            if (_diceRollerProvider == null)
+            {
+                Debug.LogError($"Missing Roller component in {name}");
+            }
             _diceRollerProvider.OnRollResult += ReceiveRollResult;
             _numberOfDiceLeft = _gamesRulesData.NumberOfStartingDices;
             InitSFM();
@@ -178,7 +184,6 @@ namespace Myorudo.FSM
         }
         public void ReceiveRollResult(List<int> diceResult)
         {
-            _diceResult.Clear();
             _diceResult = diceResult;
             if (_isDebugMode)
             {
@@ -230,6 +235,10 @@ namespace Myorudo.FSM
         {
             Debug.Log($"Player#{PlayerId} loose {numberOfDices} dice(s)");
             _numberOfDiceLeft -= numberOfDices;
+            if (_numberOfDiceLeft == 1)
+            {
+                _dudoHandler.Palifico();
+            }
             return _numberOfDiceLeft <= 0;
         }
         public void Dudo()

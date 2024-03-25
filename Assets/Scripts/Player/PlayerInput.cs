@@ -1,5 +1,6 @@
 using Myorudo.FSM;
 using Myorudo.FSM.States;
+using Myorudo.Game;
 using Myorudo.Interfaces.Actions;
 using System;
 using System.Collections;
@@ -16,6 +17,8 @@ namespace Myorudo.Player
         private bool _isDebug = false;
         [SerializeField]
         private GameObject _handFSM;
+        [SerializeField]
+        private DudoHandler _dudoHandler;
         #endregion
 
         #region InputEvent
@@ -52,6 +55,11 @@ namespace Myorudo.Player
 #else
                 Application.Quit();
 #endif
+            }
+            if (Keyboard.current.cKey.wasPressedThisFrame)
+            {
+                Debug.Log("togl");
+                _dudoHandler.TogglePool();
             }
         }
         public void OnBet(InputValue inputValue)

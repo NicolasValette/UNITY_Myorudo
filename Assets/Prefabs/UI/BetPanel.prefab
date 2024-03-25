@@ -495,7 +495,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3241367033101125726}
         m_TargetAssemblyTypeName: Myorudo.UI.BetSelectorPanel, Assembly-CSharp
-        m_MethodName: Bet
+        m_MethodName: Dudo
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

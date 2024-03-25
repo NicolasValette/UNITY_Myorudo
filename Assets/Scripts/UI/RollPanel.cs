@@ -20,7 +20,7 @@ namespace Myorudo.UI
         [SerializeField]
         private GameObject _confirmButton;
         [SerializeField]
-        private PlayerSFM _playerFSM;
+        private HumanPlayerFSM _playerFSM;
         private List<int> _diceResult;
 
         private void Awake()
@@ -70,9 +70,13 @@ namespace Myorudo.UI
             _confirmButton.SetActive(true);
             
         }
-        public void RollDice()
+        public void ManualRollDice()
         {
-            _playerFSM.PrepareToRoll();
+            _playerFSM.PrepareToManualRoll();
+        }
+        public void RandomRollDice()
+        {
+            _playerFSM.PrepareToRandomRoll();
         }
         public void ConfirmRoll()
         {

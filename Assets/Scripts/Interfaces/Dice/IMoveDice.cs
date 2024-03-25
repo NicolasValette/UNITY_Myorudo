@@ -6,7 +6,8 @@ namespace Myorudo.Interfaces.Dice
 {
     public interface IMoveDice
     {
-        void TakeDice(Vector3 position);
+
+        List<GameObject> TakeDice(Vector3 position, int numberOfDices);
         void MoveHeldDice (Vector3 position);
         void Roll(Vector2 deltaCursorDirection);
     }

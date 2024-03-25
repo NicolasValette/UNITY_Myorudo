@@ -78,7 +78,7 @@ namespace Myorudo.FSM
         public void TakeDice(Vector3 position)
         {
             IsDiceInHand = true;
-            _moveDiceProvider.TakeDice(position);
+           // _moveDiceProvider.TakeDice(position);
         }
 
         public void Roll()

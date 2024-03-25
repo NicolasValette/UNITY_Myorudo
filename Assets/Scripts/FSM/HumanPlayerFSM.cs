@@ -1,4 +1,5 @@
 using Myorudo.Datas;
+using Myorudo.Interfaces.Dice;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,9 @@ namespace Myorudo.FSM
 
     public class HumanPlayerFSM : PlayerSFM
     {
+
+        [SerializeField]
+        private GameObject _manualRollGameObject;
         public event Action OnActiveTurn;
         public override void ChooseDudoOrBet()
         {
@@ -39,6 +43,20 @@ namespace Myorudo.FSM
                 //OnElimination(true);
             }
             return result;
+        }
+        public void PrepareToManualRoll()
+        {
+            _diceRollerProvider.OnRollResult -= ReceiveRollResult;
+            _diceRollerProvider = _manualRollGameObject.GetComponent<IRollDice>();
+            _diceRollerProvider.OnRollResult += ReceiveRollResult;
+            PrepareToRoll();
+        }
+        public void PrepareToRandomRoll()
+        {
+            _diceRollerProvider.OnRollResult -= ReceiveRollResult;
+            _diceRollerProvider = _diceRollerGameObject.GetComponent<IRollDice>();
+            _diceRollerProvider.OnRollResult += ReceiveRollResult;
+            PrepareToRoll();
         }
     }
 }

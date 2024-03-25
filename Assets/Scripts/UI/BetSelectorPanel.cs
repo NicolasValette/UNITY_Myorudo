@@ -1,5 +1,6 @@
 using Myorudo.Datas;
 using Myorudo.FSM;
+using Myorudo.Game;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -19,6 +20,10 @@ namespace Myorudo.UI
 
         [SerializeField]
         private GameObject _selectorPanel;
+        [SerializeField]
+        private Image _imageDice;
+        [SerializeField]
+        private List<Sprite> _sprites;
         [Header("Value Selector")]
         [SerializeField]
         private TMP_Text _selectorValueFieldText;
@@ -37,11 +42,15 @@ namespace Myorudo.UI
         private TMP_Text _previousBidText;
         [SerializeField]
         private Button _button;
+        [SerializeField]
+        private TMP_Text _probabilityText;
 
         [SerializeField]
         HumanPlayerFSM _playerFSM;
         [SerializeField]
         private GameRulesData _gameRulesData;
+        [SerializeField]
+        private StatCalculator _statCalculator;
         
 
         private Bid _initialBid;
@@ -52,6 +61,7 @@ namespace Myorudo.UI
 
         private void OnEnable()
         {
+            
             _playerFSM.OnActiveTurn += ActivePanel;
         }
         private void OnDisable()
@@ -83,7 +93,9 @@ namespace Myorudo.UI
             _face = _initialBid.Face;
             _selectorValueFieldText.text = _value.ToString();
             _selectorFaceFieldText.text = _face.ToString();
+            _imageDice.sprite = _sprites[_face - 1];
             _previousBidText.text = $"{_initialBid.Value} - {_initialBid.Face}";
+            DisplayStat();
         }
 
         public void IncreaseValue()
@@ -106,9 +118,9 @@ namespace Myorudo.UI
         private void ModifyValue (int valueToAdd)
         {
             _value = (_value + valueToAdd);
-            if (_value <= _initialBid.Value)
+            if (_value < _initialBid.Value)
             {
-                _value = _gameRulesData.NumberOfStartingDices;
+                _value = _gameRulesData.NumberOfStartingDices * _gameRulesData.NumberOfPlayer;
             }
             else if (_value > _gameRulesData.NumberOfStartingDices * _gameRulesData.NumberOfPlayer)
             {
@@ -127,6 +139,8 @@ namespace Myorudo.UI
                 EnableOrDisableSelector(SelectorType.Value, true);
                 EnableOrDisableSelector(SelectorType.Face, true);
             }
+            
+            DisplayStat();
         }
         private void ModifyFace (int faceToAdd)
         {
@@ -149,13 +163,14 @@ namespace Myorudo.UI
 
                 if (_face <= 0)
                 {
-                    _face = 1;
+                    _face = _gameRulesData.NumberOfFace; ;
                 }
                 else if (_face > _gameRulesData.NumberOfFace)
                 {
-                    _face = _gameRulesData.NumberOfFace;
+                    _face = 1;
                 }
-                if (_face > _initialBid.Face)
+
+                if (_face > _initialBid.Face || _face == 1)
                 {
                     _decreaseFaceButton.GetComponentInChildren<TMP_Text>().text = "-";
                 }
@@ -165,6 +180,7 @@ namespace Myorudo.UI
                 }
                 _selectorValueFieldText.text = _value.ToString();
                 _selectorFaceFieldText.text = _face.ToString();
+                _imageDice.sprite = _sprites[_face - 1];
 
             }
             else
@@ -209,6 +225,8 @@ namespace Myorudo.UI
                 }
 
                 _selectorFaceFieldText.text = _face.ToString();
+                _imageDice.sprite = _sprites[_face - 1];
+                DisplayStat();
             }
         }
         private void EnableOrDisableSelector(SelectorType type, bool isEnable)
@@ -243,6 +261,11 @@ namespace Myorudo.UI
                 _playerFSM.Dudo();
                 _selectorPanel.SetActive(false);
             }
+        }
+        public void DisplayStat()
+        {
+            float stat = _statCalculator.GetStatFromBid(new Bid(_value, _face));
+            _probabilityText.text = $"{stat*100}% ({stat})";
         }
     }
 }
