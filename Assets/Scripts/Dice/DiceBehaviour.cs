@@ -15,7 +15,6 @@ namespace Myorudo.Dice
         Five,
         Six
     }
-    [RequireComponent(typeof(Rigidbody))]
     public class DiceBehaviour : MonoBehaviour
     {
         private Rigidbody _rigidbody;
@@ -36,14 +35,16 @@ namespace Myorudo.Dice
         void Start()
         {
             axis = UnityEngine.Random.insideUnitSphere;
-            _rigidbody = GetComponent<Rigidbody>();
+           
         }
 
         // Update is called once per frame
         void Update()
         {
-           if (IsLaunched == false)
+            if (IsLaunched == false)
+            {
                 transform.Rotate(axis, 100f * Time.deltaTime);
+            }
         }
 
 
@@ -54,6 +55,7 @@ namespace Myorudo.Dice
             //gameObject.tag = "Untagged";
             _actualRolling = 0;
             //_isSpinning = false;
+            _rigidbody = GetComponent<Rigidbody>();
             StartCoroutine(WaitingRollingTime());
         }
 
@@ -65,10 +67,10 @@ namespace Myorudo.Dice
         public IEnumerator WaitingRollingTime()
         {
             yield return new WaitForSeconds(_waitingTime);
-            while (_actualRolling < _rollingTime)
+            while (true)
             {
                 _actualRolling += Time.deltaTime;
-                if (_actualRolling < _rollingTime && _rigidbody.velocity.sqrMagnitude <= 0.01f && _rigidbody.angularVelocity.sqrMagnitude <= 0.01f)
+                if (/*_actualRolling < _rollingTime &&*/ _rigidbody.velocity.sqrMagnitude <= 0.01f && _rigidbody.angularVelocity.sqrMagnitude <= 0.01f)
                 {
                     DiceFace face = GetDiceNumber();
 

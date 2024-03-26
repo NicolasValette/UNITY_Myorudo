@@ -11,6 +11,8 @@ namespace Myorudo.Dice
         [SerializeField]
         private GameObject _dicePrefabs;
         [SerializeField]
+        private float _radiusSpawn = 2f;
+        [SerializeField]
         private float _offset = 5f;
         [SerializeField]
         private DicePhysicsData _dicePhysicsData;
@@ -18,6 +20,7 @@ namespace Myorudo.Dice
 
         private List <GameObject> _dicesGameObjectList;
         private GameObject _currentDice = null;
+        private bool _diceInHand;
         // Start is called before the first frame update
         void Start()
         {
@@ -28,7 +31,10 @@ namespace Myorudo.Dice
         // Update is called once per frame
         void Update()
         {
-
+            if (_diceInHand )
+            {
+                //_currentDice.transform.Rotate(_currentDice.transform.up, 2.5f);
+            }
         }
         public void SpawnDice(int number, Vector3 point, float radius)
         {
@@ -49,7 +55,8 @@ namespace Myorudo.Dice
 
                 /* Now spawn */
                 var dice = Instantiate(_dicePrefabs, spawnPos, Quaternion.identity);
-                dice.GetComponent<Rigidbody>().useGravity = false;
+                //dice.GetComponent<Rigidbody>().useGravity = false;
+                //dice.GetComponent<Rigidbody>().isKinematic = false;
                 dice.transform.parent = _currentDice.transform;
                 _dicesGameObjectList.Add(dice);
             }
@@ -57,10 +64,11 @@ namespace Myorudo.Dice
         }
         public List<GameObject> TakeDice(Vector3 position, int numberOfDices)
         {
-            Cursor.visible = false;
+            //Cursor.visible = false;
             _dicesGameObjectList.Clear();
             _currentDice = new GameObject("DicePool");
-            SpawnDice(numberOfDices, position, 5f);
+            SpawnDice(numberOfDices, Vector3.zero, _radiusSpawn);
+            _diceInHand = true;
             return _dicesGameObjectList;
         }
         public void MoveHeldDice(Vector3 position)
@@ -69,14 +77,14 @@ namespace Myorudo.Dice
         }
         public void Roll(Vector2 deltaCursorDirection)
         {
-
+            _diceInHand = false;;
             Vector3 dir = new Vector3(deltaCursorDirection.x, 0f, deltaCursorDirection.y);
             //_listOfDice[i].GetComponentInChildren<Collider>().enabled = true;
             //_listOfDice[i].GetComponent<Rigidbody>().useGravity = true;
             //_listOfDice[i].GetComponent<Rigidbody>().isKinematic = false;
             for (int i=0; i<_dicesGameObjectList.Count; i++)
             {
-                var rb = _dicesGameObjectList[i].GetComponent<Rigidbody>();
+                var rb = _dicesGameObjectList[i].AddComponent<Rigidbody>();
                 rb.useGravity = true;
                 rb.AddForce(dir.normalized * _dicePhysicsData.LaunchForce, ForceMode.Impulse);
                 rb.AddTorque(UnityEngine.Random.insideUnitSphere * _dicePhysicsData.TorqueForce, ForceMode.Impulse);

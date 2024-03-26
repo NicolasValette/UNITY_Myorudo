@@ -111,7 +111,10 @@ namespace Myorudo.Player
             //}
         }
 
-
+        public bool IsSpacePressed()
+        {
+            return Keyboard.current.spaceKey.isPressed;
+        }
         public bool IsMouseClick()
         {
             var mouse = Mouse.current;
@@ -121,10 +124,12 @@ namespace Myorudo.Player
         {
             var mouse = Mouse.current;
             Ray rayToMouse = Camera.main.ScreenPointToRay(mouse.position.ReadValue());
+
             RaycastHit hit;
             if (Physics.Raycast(rayToMouse, out hit))
             {
                 Vector3 vect = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+                Debug.Log(vect);
                 return vect;
             }
             return Vector3.zero;

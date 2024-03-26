@@ -34,6 +34,7 @@ namespace Myorudo.Game
         public static event Action<bool> OnGameEnd;
         public static event Action OnGameInit;
         public static event Action OnFirstRoundStart;
+        public static event Action<int> OnPlayerTurn;
         #endregion
 
         private List<IPlay> _playerSMFList;
@@ -187,6 +188,7 @@ namespace Myorudo.Game
         public void NextPlayer()
         {
             Debug.Log($"Turn : Player #{_nextPlayer} ");
+            OnPlayerTurn?.Invoke(_nextPlayer);
             _playerSMFDictionary[_nextPlayer].Play();
 
 
