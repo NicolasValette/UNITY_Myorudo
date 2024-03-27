@@ -115,6 +115,10 @@ namespace Myorudo.Player
         {
             return Keyboard.current.spaceKey.isPressed;
         }
+        public bool IsZPressed()
+        {
+            return Keyboard.current.bKey.isPressed;
+        }
         public bool IsMouseClick()
         {
             var mouse = Mouse.current;
@@ -123,6 +127,7 @@ namespace Myorudo.Player
         public Vector3 GetPosition()
         {
             var mouse = Mouse.current;
+            
             Ray rayToMouse = Camera.main.ScreenPointToRay(mouse.position.ReadValue());
 
             RaycastHit hit;
