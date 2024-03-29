@@ -1,8 +1,5 @@
 using Myorudo.Game;
 using Myorudo.Player;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
 
 namespace Myorudo.Dice
