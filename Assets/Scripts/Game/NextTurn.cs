@@ -40,12 +40,14 @@ namespace Myorudo.Game
         private List<IPlay> _playerSMFList;
         public List<IPlay> PlayerList { get => _playerSMFList; }
         private Dictionary<int, IPlay> _playerSMFDictionary;
+        
         private int _numberOfFinishRoll = 0;
         private static int _nextPlayer = 0;
         public static int CurrentPlayer => _nextPlayer;
         private static int _roundNumber = 0;
         public static int RoundNumber { get => _roundNumber; }
-
+        private bool _isGameEnd = false;
+        private bool _isGameReady = false;
         #region Debug attribute
         private List<PlayerSFM> _debugPlayerSFMList;
         #endregion
@@ -63,6 +65,35 @@ namespace Myorudo.Game
 
         // Start is called before the first frame update
         void Start()
+        {
+            InitGame();
+
+
+        }
+        // Update is called once per frame
+        void Update()
+        {
+            if (!_isGameReady)
+            {
+                InitGame();
+            }
+
+            if (_isDebugMode)
+            {
+                
+                for (int i = 0; i < _debugPlayerSFMList.Count; i++)
+                {
+                    string name = _debugPlayerSFMList[i].CurrentState.GetType().Name;
+                    _debugStatesTMP[i].text = $"Player #{_debugPlayerSFMList[i].PlayerId} ({_debugPlayerSFMList[i].NumberOfDiceLeft}) : {name}";
+
+                }
+            }
+        }
+        public IPlay GetPlayer(int id)
+        {
+            return _playerSMFDictionary[id];
+        }
+        private void InitGame()
         {
             _playerSMFDictionary = new Dictionary<int, IPlay>();
             _roundNumberText.enabled = _isDebugMode;
@@ -82,7 +113,7 @@ namespace Myorudo.Game
             for (int i = 0; i < _playerList.Count; i++)
             {
                 _playerSMFList.Add(_playerList[i].GetComponent<IPlay>());
-              
+
             }
             for (int i = _playerList.Count; i < _gameRulesData.NumberOfPlayer; i++)
             {
@@ -92,26 +123,9 @@ namespace Myorudo.Game
                 _debugPlayerSFMList.Add(tmpGO.GetComponent<PlayerSFM>());
             }
             _nextPlayer = UnityEngine.Random.Range(0, _gameRulesData.NumberOfPlayer);
-
-
+            _isGameReady = true;
 
         }
-        // Update is called once per frame
-        void Update()
-        {
-            if (_isDebugMode)
-            {
-                
-                for (int i = 0; i < _debugPlayerSFMList.Count; i++)
-                {
-                    string name = _debugPlayerSFMList[i].CurrentState.GetType().Name;
-                    _debugStatesTMP[i].text = $"Player #{_debugPlayerSFMList[i].PlayerId} ({_debugPlayerSFMList[i].NumberOfDiceLeft}) : {name}";
-
-                }
-            }
-        }
-
-        
         public int PreviousPlayer(int initialPlayerID)
         {
             int initTemp = initialPlayerID;
@@ -128,6 +142,8 @@ namespace Myorudo.Game
             if (_playerSMFDictionary[playerId].Type == PlayerType.Human)
             {
                 OnGameEnd?.Invoke(false);       // we raise event, false = loose
+                _isGameEnd = true;
+                _isGameReady = false;
             }
             _playerSMFList.RemoveAt(playerId);
             //for (int i = playerId; i < _playerSMFList.Count; i++)
@@ -217,6 +233,8 @@ namespace Myorudo.Game
                     //WIN
                     Debug.Log("Game win !!!!!!!!!!!!!!!");
                     OnGameEnd?.Invoke(true); // Win
+                    _isGameEnd = true;
+                    _isGameReady = false;
                 }
             }
             else
@@ -230,7 +248,10 @@ namespace Myorudo.Game
             {
                 _playerSMFDictionary[i].FinishRound();
             }
-            PrepareNextRound?.Invoke();
+            if (!_isGameEnd)
+            {
+                PrepareNextRound?.Invoke();
+            }
 
         }
     }

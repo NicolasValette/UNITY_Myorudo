@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d495636741d9cc844b77714a4640f5f5, type: 3}
+  m_Name: RedDice
+  m_EditorClassIdentifier: 
+  _numberOfFace: 6
+  _spriteFace:
+  - {fileID: 21300000, guid: 1c2b955980e48c042b0245547bdb97b4, type: 3}
+  - {fileID: 21300000, guid: a701186b8398fe94a92ec7a1dc5fd4e8, type: 3}
+  - {fileID: 21300000, guid: de4e382b55493934eb189925fdfb78ea, type: 3}
+  - {fileID: 21300000, guid: 6baf2f19808dd594b8da81c5f5c6983f, type: 3}
+  - {fileID: 21300000, guid: fae78a7eb02e02f4e99ff13052ecd821, type: 3}
+  - {fileID: 21300000, guid: 1b62b6da91c9df5468fb2f9d6466b1d9, type: 3}

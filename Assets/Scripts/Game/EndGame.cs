@@ -1,14 +1,16 @@
 using Myorudo.Game;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class EndGame : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _gameOverPanel;
+    private GameObject _gameEndPanel;
     [SerializeField]
-    private GameObject _gameWinPanel;
+    private TMP_Text _gameEndText;
+ 
 
     private void OnEnable()
     {
@@ -22,19 +24,28 @@ public class EndGame : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _gameOverPanel.SetActive(false);
-        _gameWinPanel.SetActive(false);
+        _gameEndPanel.SetActive(false);
     }
 
     public void GameFinish(bool isWin)
     {
+        _gameEndPanel.SetActive(true);
         if (isWin)
         {
-            _gameWinPanel.SetActive(true);
+            GameWin();
         }
         else
         {
-            _gameOverPanel.SetActive(true);
+            GameOver();
         }
+    }
+
+    private void GameWin()
+    {
+        _gameEndText.text = "You win ! You're a legendary pirate !";
+    }
+    private void GameOver()
+    {
+        _gameEndText.text = "You loose, you scallywag !";
     }
 }

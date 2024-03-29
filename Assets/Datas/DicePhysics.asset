@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6480d32aff11c4746bed1a9498a9001a, type: 3}
   m_Name: DicePhysics
   m_EditorClassIdentifier: 
-  _launchForce: 50
+  _launchForce: 35
   _torqueForce: 5

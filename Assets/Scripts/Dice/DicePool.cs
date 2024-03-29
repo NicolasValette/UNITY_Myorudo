@@ -9,31 +9,34 @@ namespace Myorudo.Dice
     {
 
         [SerializeField]
-        private GameObject _pool;
+        protected GameObject _pool;
         [SerializeField]
-        private List<GameObject> _dices;
+        protected List<GameObject> _dices;
         [SerializeField]
-        private List<Vector3> _rotationAngle;
+        protected List<Vector3> _rotationAngle;
         [SerializeField]
-        private NextTurn _TurnManager;
+        protected NextTurn _TurnManager;
         [SerializeField]
-        private int _playerID;
+        protected int _playerID;
 
-        private void OnEnable()
+        protected bool _isReveal = false;
+        void OnEnable()
         {
             DudoHandler.OnDudoRevealHand += Reveal;
+            DudoHandler.OnRoundWin += Unreveal;
             NextTurn.OnFirstRoundStart += InitDice;
         }
-        private void OnDisable()
+        void OnDisable()
         {
             DudoHandler.OnDudoRevealHand -= Reveal;
+            DudoHandler.OnRoundWin -= Unreveal;
             NextTurn.OnFirstRoundStart -= InitDice;
         }
 
         // Start is called before the first frame update
         void Start()
         {
-           
+            _pool.SetActive(false);
         }
 
         // Update is called once per frame
@@ -44,23 +47,31 @@ namespace Myorudo.Dice
 
         public void InitDice()
         {
+           
+            _pool.SetActive(false);
             for (int i = 0; i < _dices.Count; i++)
             {
                 _dices[i].SetActive(false);
             }
-            if (!_TurnManager.PlayerList[_playerID].IsEliminated)
+            if (!_TurnManager.GetPlayer(_playerID).IsEliminated)
             {
-                for (int i = 0; i < _TurnManager.PlayerList[_playerID].DiceResult.Count; i++)
+                for (int i = 0; i < _TurnManager.GetPlayer(_playerID).DiceResult.Count; i++)
                 {
                     _dices[i].SetActive(true);
-                    _dices[i].transform.rotation = Quaternion.Euler(_rotationAngle[_TurnManager.PlayerList[_playerID].DiceResult[i]-1]);
+                    _dices[i].transform.rotation = Quaternion.Euler(_rotationAngle[_TurnManager.GetPlayer(_playerID).DiceResult[i]-1]);
                 }
                 
             }
         }
-        public void Reveal()
+        public virtual void Reveal()
         {
-
+            _isReveal = true;
+            _pool.SetActive(true);
+        }
+        public virtual void Unreveal(int id)
+        {
+            _isReveal = false;
+            _pool.SetActive(false);
         }
     }
 }

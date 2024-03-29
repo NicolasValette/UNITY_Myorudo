@@ -56,8 +56,8 @@ namespace Myorudo.Game
             stat = ((Fact(_diceNumber)) / (Fact(bid.Value) * Fact(_diceNumber - bid.Value)))
                     * Mathf.Pow(1f / _gameRulesData.NumberOfFace, bid.Value)
                     * Mathf.Pow(1f - (1f / _gameRulesData.NumberOfFace), (_diceNumber - bid.Value));
-
-            return (bid.Face == 0 || _dudoHandler.IsPalifico)?stat:stat*2;
+            float result = Mathf.Round(((bid.Face == 0 || _dudoHandler.IsPalifico) ? stat : stat * 2) * 1000);
+            return result / 1000; ;
         }
         private float Fact(int n)
         {

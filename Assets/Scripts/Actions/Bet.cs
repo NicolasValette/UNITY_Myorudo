@@ -24,10 +24,12 @@ namespace Myorudo.Actions
         private void OnEnable()
         {
             NextTurn.PrepareNextRound += NextRound;
+            NextTurn.OnGameEnd += NextRound;
         }
         private void OnDisable()
         {
             NextTurn.PrepareNextRound -= NextRound;
+            NextTurn.OnGameEnd -= NextRound;
         }
         protected virtual void OnBetChanged(Bid bid)
         {
@@ -48,6 +50,10 @@ namespace Myorudo.Actions
         public void NextRound()
         {
             _currentBid = null;
+        }
+        public void NextRound(bool win)
+        {
+            NextRound();
         }
         public abstract Bid MakeBet(Bid bid = null);
     }

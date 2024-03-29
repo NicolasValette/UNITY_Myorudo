@@ -27,6 +27,8 @@ namespace Myorudo.Player
 
         private IRoll _rollProvider;
 
+        private Vector2 _deltaPos;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -47,15 +49,12 @@ namespace Myorudo.Player
         // Update is called once per frame
         void Update()
         {
-            if (Keyboard.current.escapeKey.wasPressedThisFrame)
+
+            if(!Mouse.current.leftButton.isPressed)
             {
-                Debug.Log("escape");
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#else
-                Application.Quit();
-#endif
+                _deltaPos = Mouse.current.delta.ReadValue();
             }
+            
             if (Keyboard.current.cKey.wasPressedThisFrame)
             {
                 Debug.Log("togl");
@@ -111,9 +110,17 @@ namespace Myorudo.Player
             //}
         }
 
+        public bool WasEscapePressed()
+        {
+            return Keyboard.current.escapeKey.wasReleasedThisFrame;
+        }
         public bool IsSpacePressed()
         {
             return Keyboard.current.spaceKey.isPressed;
+        }
+        public bool WasSpaceReleased()
+        {
+            return Keyboard.current.spaceKey.wasPressedThisFrame;
         }
         public bool IsZPressed()
         {
@@ -139,11 +146,22 @@ namespace Myorudo.Player
             }
             return Vector3.zero;
         }
+        public bool IsRayHit()
+        {
+            var mouse = Mouse.current;
+
+            Ray rayToMouse = Camera.main.ScreenPointToRay(mouse.position.ReadValue());
+
+            RaycastHit hit;
+            return Physics.Raycast(rayToMouse, out hit);
+            
+        }
 
         public Vector2 GetCursorDeltaPos()
         {
-            var mouse = Mouse.current;
-            return mouse.delta.ReadValue();
+
+
+            return _deltaPos;
         }
     }
 }

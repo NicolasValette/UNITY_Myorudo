@@ -1,7 +1,9 @@
+using Myorudo.Game;
 using Myorudo.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Myorudo.CameraAction
 {
@@ -18,7 +20,18 @@ namespace Myorudo.CameraAction
 
         private float _defaultfov;
         private bool _isZoom;
+        private bool _isReveal = false;
 
+        private void OnEnable()
+        {
+            DudoHandler.OnDudoRevealHand += RevealDice;
+            DudoHandler.OnRoundWin += UnrevealDice;
+        }
+        private void OnDisable()
+        {
+            DudoHandler.OnDudoRevealHand -= RevealDice;
+            DudoHandler.OnRoundWin -= UnrevealDice;
+        }
         // Start is called before the first frame update
         void Start()
         {
@@ -28,31 +41,54 @@ namespace Myorudo.CameraAction
         // Update is called once per frame
         void Update()
         {
-            if (_playerInput.IsZPressed())
+            if (!_isReveal)
             {
-                if (!_isZoom)
+                if (_playerInput.IsSpacePressed())
                 {
-                Zoom();
+                    if (!_isZoom)
+                    {
+                        Zoom();
+                    }
                 }
-            }
-            else
-            {
-                if (_isZoom)
+                else
                 {
-                    Unzoom();
+                    if (_isZoom)
+                    {
+                        Unzoom();
+                    }
                 }
             }
         }
         private void Zoom()
         {
-            StartCoroutine(LerpZoom(_defaultfov / 2f, _zoomDuration));
-            _isZoom = true;
+            if (!_isZoom)
+            {
+
+                StartCoroutine(LerpZoom(_defaultfov / 2f, _zoomDuration));
+                _isZoom = true;
+            }
         }
         private void Unzoom()
         {
-            StartCoroutine(LerpZoom(_defaultfov, _zoomDuration));
-            _isZoom = false;
+            if (_isZoom)
+            {
+
+                StartCoroutine(LerpZoom(_defaultfov, _zoomDuration));
+                _isZoom = false;
+            }
         }
+
+        private void RevealDice()
+        {
+            Zoom();
+            _isReveal = true;
+        }
+        public void UnrevealDice(int winner)
+        {
+            Unzoom();
+            _isReveal = false;
+        }
+
 
         IEnumerator LerpZoom(float endValue, float duration)
         {

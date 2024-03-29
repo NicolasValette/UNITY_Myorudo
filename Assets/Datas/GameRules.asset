@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: GameRules
   m_EditorClassIdentifier: 
   _numberOfPlayer: 4
-  _numberOfStartingDices: 2
+  _numberOfStartingDices: 5
   _numberOfDiceLost: 1
   _numberOfFace: 6

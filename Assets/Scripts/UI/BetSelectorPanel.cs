@@ -41,7 +41,7 @@ namespace Myorudo.UI
         [SerializeField]
         private TMP_Text _previousBidText;
         [SerializeField]
-        private Button _button;
+        private Button _betButton;
         [SerializeField]
         private TMP_Text _probabilityText;
 
@@ -95,6 +95,16 @@ namespace Myorudo.UI
             _selectorFaceFieldText.text = _face.ToString();
             _imageDice.sprite = _sprites[_face - 1];
             _previousBidText.text = $"{_initialBid.Value} - {_initialBid.Face}";
+            _decreaseValueButton.interactable = true;
+            _increaseValueButton.interactable = true;
+            _decreaseFaceButton.interactable = true;
+            _increaseFaceButton.interactable = true;
+
+            
+            _decreaseFaceButton.GetComponentInChildren<TMP_Text>().text = "-";
+            
+
+            CheckValidBid();
             DisplayStat();
         }
 
@@ -139,7 +149,7 @@ namespace Myorudo.UI
                 EnableOrDisableSelector(SelectorType.Value, true);
                 EnableOrDisableSelector(SelectorType.Face, true);
             }
-            
+            CheckValidBid();
             DisplayStat();
         }
         private void ModifyFace (int faceToAdd)
@@ -187,7 +197,13 @@ namespace Myorudo.UI
             {
                 if (_face == 1)
                 {
-                    _face = _initialBid.Face;
+                    //   _face = _initialBid.Face;
+                    //   _value = _initialBid.Value;
+                    _face = (_face + faceToAdd);
+                    if (_face <= 0)
+                    {
+                        _face = _gameRulesData.NumberOfFace;
+                    }
                     _value = _initialBid.Value;
                     _selectorValueFieldText.text = _value.ToString();
                     _decreaseFaceButton.GetComponentInChildren<TMP_Text>().text = "-";
@@ -216,18 +232,45 @@ namespace Myorudo.UI
                 {
                     _decreaseFaceButton.GetComponentInChildren<TMP_Text>().text = "Paco";
                 }
-                if (_face < _initialBid.Face)
+                if (_face > 1 && _face < _initialBid.Face)
                 {
-                    _face = 1;
-                    _decreaseFaceButton.interactable = false;
+                    if (faceToAdd <0)
+                    {
+                        _face = 1;
+                        _value = (_value / 2);
+                    }
+                    else
+                    {
+                        _face = _initialBid.Face;
+                        _value = _initialBid.Value;
+                    }
+                    
+                    _selectorValueFieldText.text = _value.ToString();
+                }
+                else if (_face == 1)
+                {
                     _value = (_value / 2);
                     _selectorValueFieldText.text = _value.ToString();
                 }
+               
+
 
                 _selectorFaceFieldText.text = _face.ToString();
                 _imageDice.sprite = _sprites[_face - 1];
-                DisplayStat();
+               
             }
+            if (_face != _initialBid.Face)
+            {
+                EnableOrDisableSelector(SelectorType.Face, true);
+                EnableOrDisableSelector(SelectorType.Value, false);
+            }
+            else
+            {
+                EnableOrDisableSelector(SelectorType.Face, true);
+                EnableOrDisableSelector(SelectorType.Value, true);
+            }
+            CheckValidBid();
+            DisplayStat();
         }
         private void EnableOrDisableSelector(SelectorType type, bool isEnable)
         {
@@ -245,7 +288,7 @@ namespace Myorudo.UI
 
         public void Bet()
         {
-            if (_value != _initialBid.Value || _face != _initialBid.Face)
+            if (_isFirstBidOfRound || _value != _initialBid.Value || _face != _initialBid.Face)
             {
 
             Debug.Log($"Player bet : {_value} - {_face}");
@@ -260,6 +303,17 @@ namespace Myorudo.UI
                 Debug.Log("Player yells Dudo");
                 _playerFSM.Dudo();
                 _selectorPanel.SetActive(false);
+            }
+        }
+        private void CheckValidBid()
+        {
+            if (_value == _initialBid.Value && _face ==  _initialBid.Face && !_isFirstBidOfRound) 
+            {
+                _betButton.interactable = false;
+            }
+            else
+            {
+                _betButton.interactable = true;
             }
         }
         public void DisplayStat()

@@ -13,12 +13,19 @@ namespace Myorudo.Dice
     public class ManualRoll : MonoBehaviour, IRollDice
     {
         [SerializeField]
+        private AudioClip _throwSoundEffect;
+        [SerializeField]
+        private AudioClip _shuffleSoundEffect;
+        [SerializeField]
         private Player.PlayerInput _playerInput;
+        [SerializeField]
+        private Transform _defaultLaunchPos;
         private IMoveDice _moveDiceProvider;
         private bool _isDiceInHand = false;
         private int _diceReaded = 0;
         private List<int> _diceResult;
         List<GameObject> _dices;
+        private PlayAudioEffect _audioEffectPlayer;
 
         public event Action<List<int>> OnRollResult;
 
@@ -27,6 +34,7 @@ namespace Myorudo.Dice
         {
             _dices = new List<GameObject>();
             _moveDiceProvider = GetComponent<IMoveDice>();
+            _audioEffectPlayer = GetComponent<PlayAudioEffect>();
         }
 
         // Update is called once per frame
@@ -39,6 +47,15 @@ namespace Myorudo.Dice
                 
                 if (_playerInput.IsMouseClick())
                 {
+                    if (!_playerInput.IsRayHit())
+                    {
+                        _moveDiceProvider.MoveHeldDice(_defaultLaunchPos.position);
+                    }
+                    if (_audioEffectPlayer != null)
+                    {
+                        _audioEffectPlayer.Stop();
+                        _audioEffectPlayer.PlayEffect(_throwSoundEffect);
+                    }
                     _moveDiceProvider.Roll(_playerInput.GetCursorDeltaPos());
                     _isDiceInHand = false;
                 }
@@ -51,6 +68,10 @@ namespace Myorudo.Dice
             _diceResult = new List<int>();
             _dices.Clear();
             _dices = _moveDiceProvider.TakeDice(_playerInput.GetPosition(), nbOfDices);
+            if (_audioEffectPlayer != null)
+            {
+                _audioEffectPlayer.PlayEffect(_shuffleSoundEffect, true);
+            }
             for (int i=0;i<_dices.Count;i++)
             {
                 _dices[i].GetComponent<DiceBehaviour>().OnDiceStop += ReadDice;

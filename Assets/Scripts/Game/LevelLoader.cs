@@ -28,6 +28,18 @@ namespace Myorudo.Game
         {
             StartCoroutine(LoadLevel(SceneManager.GetActiveScene().buildIndex + 1));
         }
+        public void LoadSpecificLevel(int buildIndex)
+        {
+            StartCoroutine(LoadLevel(buildIndex));
+        }
+        public void Quit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+        }
 
         private IEnumerator LoadLevel(int levelIndex)
         {
@@ -37,6 +49,8 @@ namespace Myorudo.Game
 
             SceneManager.LoadScene(levelIndex);
         }
+
+
 
     }
 }

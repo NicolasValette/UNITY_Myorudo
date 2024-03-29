@@ -17,19 +17,23 @@ namespace Myorudo.Game
         [SerializeField]
         private GameObject _poolPanel;
         [SerializeField]
-        private List<TMP_Text> _poolText;
+        private GameObject _dicePoolPlayerPrefab;
+        
 
         [SerializeField]
         private GameObject _dudoPanel;
         [SerializeField]
         private TMP_Text _dudoText;
         [SerializeField]
+        private TMP_Text _looseDiceText;
+        [SerializeField]
         private TMP_Text _winnerDudoText;
         [SerializeField]
         private TMP_Text _palificoText;
 
-
+        private List<TMP_Text> _poolText;
         private int[] _dicePool;
+        private int[] _diceFromPlayerPool;
         private List<IPlay> _playerList;
         private int _winnerID;
         private int _looserID;
@@ -67,19 +71,11 @@ namespace Myorudo.Game
         // Update is called once per frame
         void Update()
         {
-          //  _poolPanel.SetActive(true);
-            if (_dicePool != null)
-            {
-
-                for (int i = 0; i < _poolText.Count; i++)
-                {
-                    _poolText[i].text = $"{i + 1} ; {_dicePool[i]}";
-                }
-            }
         }
         public void TogglePool()
         {
             _poolPanel.SetActive(!_poolPanel.activeSelf);
+            DisplayPool();
         }
         public void RollDone(List<int> diceResult)
         {
@@ -94,6 +90,18 @@ namespace Myorudo.Game
             for (int i = 0; i < playerList.Count; i++)
             {
                 playerList[i].OnRollFinished += RollDone;
+            }
+            _poolText = new List<TMP_Text>();
+            for (int i = 0; i < _gameRulesData.NumberOfPlayer; i++)
+            {
+                GameObject go = Instantiate(_dicePoolPlayerPrefab);
+                go.transform.SetParent(_poolPanel.transform, false);
+                _poolText.Add(go.GetComponent<TMP_Text>());
+            }
+            _diceFromPlayerPool = new int[_gameRulesData.NumberOfPlayer];
+            for (int i = 0; i < _diceFromPlayerPool.Length; i++)
+            {
+                _diceFromPlayerPool[i] = _gameRulesData.NumberOfStartingDices;
             }
         }
 
@@ -110,6 +118,7 @@ namespace Myorudo.Game
                     _dicePool[i] = 0;
                 }
             }
+          
         }
         public void Palifico()
         {
@@ -119,24 +128,39 @@ namespace Myorudo.Game
         public void InitBeforeStart(int diceFaces, List<IPlay> playerList)
         {
             _dicePool = new int[diceFaces];
+            
             _playerList = new List<IPlay>();
             _playerList = playerList;
         }
 
-        private void RevealPool(int playerID)
+        private void RevealPool(int playerID, Bid bid)
         {
             _dudoPanel.SetActive(true);
             _poolPanel.SetActive(true);
-
-            _dudoText.text = $"Player#{playerID} yells DUDO !!!";
-            for (int i = 0; i < _poolText.Count; i++)
+            DisplayPool();
+            _dudoText.text = $"Player#{playerID} yells DUDO !!!\n on bid {bid.Value} - {bid.Face}";
+           
+        }
+        private void DisplayPool()
+        {
+            if (_diceFromPlayerPool != null)
             {
-                _poolText[i].text = $"{i + 1} ; {_dicePool[i]}";
+                for (int i = 0; i < _poolText.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        _poolText[i].text = $"Player #{i}(YOU) has {_diceFromPlayerPool[i]} dices left";
+                    }
+                    else
+                    {
+                        _poolText[i].text = $"Player #{i} has {_diceFromPlayerPool[i]} dices left";
+                    }
+                }
             }
         }
         public void RevealHandAndCheckDudoCorrect(Bid bid, int playerDudoID)
         {
-            RevealPool(playerDudoID);
+             RevealPool(playerDudoID, bid);
             OnDudoRevealHand?.Invoke();
             if (_isPalifico)
             {
@@ -182,7 +206,10 @@ namespace Myorudo.Game
                     _winnerID = GetComponent<NextTurn>().PreviousPlayer(playerDudoID);
 
                 }
+                
             }
+            _looseDiceText.text = $"Player #{_looserID} looses 1 dice !";
+            _diceFromPlayerPool[_looserID]--;
         }
         public void DudoConfirm()
         {

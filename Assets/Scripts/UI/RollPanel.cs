@@ -1,3 +1,4 @@
+using Myorudo.Datas;
 using Myorudo.FSM;
 using Myorudo.Game;
 using System.Collections;
@@ -5,16 +6,20 @@ using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Myorudo.UI
 {
     public class RollPanel : MonoBehaviour
     {
-
+        [SerializeField]
+        private DiceData _diceData;
         [SerializeField]
         private GameObject _playerFSMGameObject;
         [SerializeField]
-        private TMP_Text _resultPanel;
+        private GameObject _resultPanel;
+        [SerializeField]
+        private GameObject _resultImagePrefab;
         [SerializeField]
         private GameObject _rollButton;
         [SerializeField]
@@ -25,7 +30,7 @@ namespace Myorudo.UI
 
         private void Awake()
         {
-            _resultPanel.enabled = false;
+            _resultPanel.SetActive(false);
             _diceResult = new List<int>();
             _rollButton.SetActive(false);
             _confirmButton.SetActive(false);
@@ -58,16 +63,19 @@ namespace Myorudo.UI
         }
         public void RetrieveResult(List<int> diceResult)
         {
-            _resultPanel.enabled = true;
+            _resultPanel.SetActive(true);
             _diceResult = diceResult;
             StringBuilder strb = new StringBuilder();
-            strb.Append(_diceResult[0]);
-            for (int i=1; i<_diceResult.Count; i++)
+            _confirmButton.SetActive(true);
+           
+            for (int i=0; i<_diceResult.Count; i++)
             {
+                GameObject diceImg = Instantiate(_resultImagePrefab);
+                diceImg.GetComponent<Image>().sprite = _diceData[_diceResult[i]];
+                diceImg.transform.SetParent(_resultPanel.transform, false);
                 strb.Append($" - {_diceResult[i]}");
             }
-            _resultPanel.text = strb.ToString();
-            _confirmButton.SetActive(true);
+            Debug.Log(strb.ToString());
             
         }
         public void ManualRollDice()
@@ -81,7 +89,12 @@ namespace Myorudo.UI
         public void ConfirmRoll()
         {
             _playerFSM.EndRoll();
-            _resultPanel.enabled = false;
+            for (int i=0; i < _resultPanel.transform.childCount;i++)
+            {
+                Destroy(_resultPanel.transform.GetChild(i).gameObject);
+
+            }
+            _resultPanel.SetActive(false);
         }
     }
 }

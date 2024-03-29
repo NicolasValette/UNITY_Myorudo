@@ -78,7 +78,7 @@ namespace Myorudo.Dice
         public void Roll(Vector2 deltaCursorDirection)
         {
             _diceInHand = false;;
-            Vector3 dir = new Vector3(deltaCursorDirection.x, 0f, deltaCursorDirection.y);
+            Vector3 dir = new Vector3(-deltaCursorDirection.x, 0f, -deltaCursorDirection.y);
             //_listOfDice[i].GetComponentInChildren<Collider>().enabled = true;
             //_listOfDice[i].GetComponent<Rigidbody>().useGravity = true;
             //_listOfDice[i].GetComponent<Rigidbody>().isKinematic = false;
